@@ -45,9 +45,21 @@ class Config:
     def __init__(self, path="./config.yml"):
         with open(path, 'r') as config:
             self.__config = yaml.safe_load(config)
-            self.__search_queries = self.__config['scraper']['query']
-            self.__pushover = self.__config['scraper']['settings']['pushover']
 
     def get_queries(self):
-        for
+        """
+        Returns search queries as a list of SearchQuery objects.
+        """
+        search_queries = self.__config['scraper']['query']
+        results = []
+        for query in search_queries:
+            results.append(SearchQuery(query.get('locationId'),
+                                       query.get('categoryId'),
+                                       query.get('q'),
+                                       query.get('page'),
+                                       query.get('size'),
+                                       query.get('search')
+                                       )
+                           )
+        return results
 
