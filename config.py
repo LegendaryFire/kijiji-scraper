@@ -38,3 +38,9 @@ class Config:
         results = [SearchQuery(query) for query in search_queries]
         return results
 
+    def get_scan_interval(self) -> int:
+        """
+        Gets the time in seconds between scanning ads.
+        :return: Returns the time in seconds.
+        """
+        return int(self.__config['scraper']['settings']['scan_interval'])
