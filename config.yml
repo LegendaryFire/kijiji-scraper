@@ -1,0 +1,13 @@
+scraper:
+  settings:
+    pushover:
+      token: YOUR_TOKEN
+      user: YOUR_USER
+  query:
+    - search: Example Search
+      params:
+        locationId: 0
+        categoryId: 0
+        page: 0
+        size: 20
+        q: My Search Terms
