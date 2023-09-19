@@ -20,7 +20,7 @@ class Ad:
         self.__datetime_start = datetime.strptime(data.get('ad:start-date-time'), '%Y-%m-%dT%H:%M:%S.000Z').replace(tzinfo=timezone.utc)
         self.__datetime_end = datetime.strptime(data.get('ad:end-date-time'), '%Y-%m-%dT%H:%M:%S.000Z').replace(tzinfo=timezone.utc) if data.get('ad:end-date-time') is not None else None
         self.__image = None
-        image = data.get('pic:pictures').get('pic:picture')
+        image = data.get('pic:pictures').get('pic:picture') if data.get('pic:pictures') is not None else None
         if isinstance(image, list):
             self.__image = image[0].get('pic:link')
         elif isinstance(image, dict):
