@@ -1,6 +1,7 @@
 import requests
 from constants import API_REQUEST_HEADERS
 import xmltodict
+from datetime import datetime,timezone
 
 
 class Ad:
@@ -14,6 +15,20 @@ class Ad:
             else "Please Contact" if data.get('ad:price').get('types:amount') is None \
             else data.get('ad:price').get('types:amount')
         self.__user_id = data.get('ad:user-id')
+        self.__datetime_scraped = datetime.now(timezone.utc)
+        self.__datetime_creation = datetime.strptime(data.get('ad:creation-date-time'), '%Y-%m-%dT%H:%M:%S.000Z').replace(tzinfo=timezone.utc)
+        self.__datetime_start = datetime.strptime(data.get('ad:start-date-time'), '%Y-%m-%dT%H:%M:%S.000Z').replace(tzinfo=timezone.utc)
+        self.__datetime_end = datetime.strptime(data.get('ad:end-date-time'), '%Y-%m-%dT%H:%M:%S.000Z').replace(tzinfo=timezone.utc)
+        self.__image = None
+        image = data.get('pic:pictures').get('pic:picture')
+        if isinstance(image, list):
+            self.__image = image[0].get('pic:link')
+        elif isinstance(image, dict):
+            self.__image = image.get('pic:link')
+        if self.__image is not None:
+            for i in range(len(self.__image)):
+                if self.__image[i].get('@rel') == 'extraLarge':
+                    self.__image = self.__image[i].get('@href')
 
 
 class Scraper:
