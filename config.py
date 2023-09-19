@@ -4,42 +4,24 @@ import yaml
 
 
 class SearchQuery:
-    def __init__(self, locationId, categoryId, search, adType, page, size, nickname):
-        self.__locationId = locationId
-        self.__categoryId = categoryId
-        self.__search = search
-        self.__adType = adType
-        self.__page = page
-        self.__size = size
-        self.__nickname = nickname
-
-    def get_location(self):
-        return self.__locationId
-
-    def get_category(self):
-        return self.__categoryId
+    def __init__(self, data):
+        self.__data = data
+        self.__search = self.__data.get('search')
+        self.__params = self.__data.get('params')
 
     def get_search(self):
+        """
+        The name of the search.
+        :return: Returns the name of the search.
+        """
         return self.__search
 
-    def get_page(self):
-        return self.__page
-
-    def get_size(self):
-        return self.__size
-
-    def get_nickname(self):
-        return self.__nickname
-
-    def get_url(self):
-        url_parameters = parse.urlencode({
-            'locationId': self.__locationId,
-            'categoryId': self.__categoryId,
-            'q': self.__search,
-            'adType': self.__adType,
-            'page': self.__page,
-            'size': self.__size,
-        })
+    def build_url(self):
+        """
+        Builds the search URL for the given search query.
+        :return: Returns the generated search URL.
+        """
+        url_parameters = parse.urlencode(self.__params)
         return f'{API_SEARCH_ENDPOINT}{url_parameters}'
 
 
@@ -53,16 +35,6 @@ class Config:
         Returns search queries as a list of SearchQuery objects.
         """
         search_queries = self.__config['scraper']['query']
-        results = []
-        for query in search_queries:
-            results.append(SearchQuery(query.get('locationId'),
-                                       query.get('categoryId'),
-                                       query.get('q'),
-                                       query.get('adType'),
-                                       query.get('page'),
-                                       query.get('size'),
-                                       query.get('search')
-                                       )
-                           )
+        results = [SearchQuery(query) for query in search_queries]
         return results
 
