@@ -4,10 +4,11 @@ import yaml
 
 
 class SearchQuery:
-    def __init__(self, locationId, categoryId, search, page, size, nickname):
+    def __init__(self, locationId, categoryId, search, adType, page, size, nickname):
         self.__locationId = locationId
         self.__categoryId = categoryId
         self.__search = search
+        self.__adType = adType
         self.__page = page
         self.__size = size
         self.__nickname = nickname
@@ -35,6 +36,7 @@ class SearchQuery:
             'locationId': self.__locationId,
             'categoryId': self.__categoryId,
             'q': self.__search,
+            'adType': self.__adType,
             'page': self.__page,
             'size': self.__size,
         })
@@ -56,6 +58,7 @@ class Config:
             results.append(SearchQuery(query.get('locationId'),
                                        query.get('categoryId'),
                                        query.get('q'),
+                                       query.get('adType'),
                                        query.get('page'),
                                        query.get('size'),
                                        query.get('search')
