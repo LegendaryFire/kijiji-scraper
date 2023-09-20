@@ -15,18 +15,18 @@ while True:
         for ad in results:
             ad = scraper.parse_ad(ad)
             exists = database.exists(ad)
-            if exists is False:
+            if not exists:
+                # This is an ad we've never seen before.
                 database.save_ad(ad)
                 if query.send_notifications():
-                    if ad.is_business:
-                        if query.include_business():
-                            pushover.send_notification(ad)
-                    else:
+                    if (ad.is_business and query.include_business()) or (not ad.is_business):
                         pushover.send_notification(ad)
             else:
-                # Check for changes.
+                # We've seen this ad before, let's look for any changes.
                 changes = database.compare(ad, True)
                 if len(changes) > 0:
-                    # Notify user of changes made to ad. Bumped, price change, etc.
-                    pass
+                    if query.send_notifications():
+                        if (ad.is_business and query.include_business()) or (not ad.is_business):
+                            pushover.send_notification(ad, changes)
+
     time.sleep(config.get_scan_interval())
