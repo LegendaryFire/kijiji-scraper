@@ -6,6 +6,8 @@ scraper:
       user: YOUR_USER
   query:
     - search: Example Search
+      include_business: False
+      send_notification: True
       params:
         locationId: 0
         categoryId: 0
