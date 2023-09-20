@@ -14,7 +14,7 @@ class Ad(Base):
     id: Mapped[str] = mapped_column(primary_key=True)
     is_business: Mapped[bool]
     title: Mapped[str]
-    description: Mapped[str]
+    description: Mapped[Optional[str]]
     type: Mapped[str]
     price: Mapped[str]
     user_id: Mapped[str]
