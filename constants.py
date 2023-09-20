@@ -1,3 +1,5 @@
+from enum import Enum
+
 API_REQUEST_HEADERS = {
     "User-Agent": "com.ebay.kijiji.ca 6.5.0 (samsung SM-G930U; Android 8.0.0; en_US)",
     "Accept-Language": "en-CA",
@@ -10,3 +12,8 @@ API_REQUEST_HEADERS = {
 }
 
 API_SEARCH_ENDPOINT = "https://mingle.kijiji.ca/api/ads?"
+
+
+class Changes(Enum):
+    PRICE = 1
+    BUMPED = 2
