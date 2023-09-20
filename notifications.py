@@ -1,6 +1,5 @@
 import logging
-from PIL import Image
-
+from constants import Changes
 from database import Ad
 import requests
 
@@ -12,6 +11,17 @@ class Pushover:
 
     def send_notification(self, ad: Ad, changes=None) -> bool:
         title = ad.title
+        if isinstance(changes, list):
+            localized_changes = ""
+            for i in range(len(changes)):
+                if changes[i] == Changes.PRICE:
+                    localized_changes += "Price Change"
+                elif changes[i] == Changes.BUMPED:
+                    localized_changes += "Bumped"
+                if i != len(changes) - 1:
+                    localized_changes += ", "
+            title = f"({localized_changes}): {ad.title}"
+
         message = f'<a href="https://www.kijiji.ca/v-view-details.html?adId={ad.id}">Click here to view.</a>\n\n' \
                   f"<b>Price:</b> {ad.price}\n" \
                   f"<b>Description:</b> {ad.description}\n"
