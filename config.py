@@ -6,22 +6,36 @@ import yaml
 class SearchQuery:
     def __init__(self, data):
         self.__data = data
-        self.__search = self.__data.get('search')
-        self.__params = self.__data.get('params')
 
-    def get_search(self):
+    def get_search(self) -> str:
         """
         The name of the search.
         :return: Returns the name of the search.
         """
-        return self.__search
+        return self.__data.get('search')
 
-    def build_url(self):
+    def include_business(self) -> bool:
+        """
+        Whether to include business ads or not.
+        :return: True if including business ads.
+        """
+        value = self.__data.get('include_business')
+        return value if value is not None else False
+
+    def send_notifications(self) -> bool:
+        """
+        Whether to send notifications or not.
+        :return: True if sending notifications.
+        """
+        value = self.__data.get('send_notification')
+        return value if value is not None else False
+
+    def build_url(self) -> str:
         """
         Builds the search URL for the given search query.
         :return: Returns the generated search URL.
         """
-        url_parameters = parse.urlencode(self.__params)
+        url_parameters = parse.urlencode(self.__data.get('params'))
         return f'{API_SEARCH_ENDPOINT}{url_parameters}'
 
 
