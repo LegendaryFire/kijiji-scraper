@@ -44,6 +44,20 @@ class Config:
         with open(path, 'r') as config:
             self.__config = yaml.safe_load(config)
 
+    def get_pushover_user(self):
+        """
+        Gets the Pushover user key.
+        :return: Returns the Pushover user key as a string.
+        """
+        return self.__config['scraper']['settings']['pushover']['user']
+
+    def get_pushover_token(self):
+        """
+        Gets the Pushover API token.
+        :return: Returns the Pushover API token as a string.
+        """
+        return self.__config['scraper']['settings']['pushover']['token']
+
     def get_queries(self):
         """
         Returns search queries as a list of SearchQuery objects.
