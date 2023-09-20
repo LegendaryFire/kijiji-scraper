@@ -58,7 +58,7 @@ class Database:
         changes = []
         if stored_ad.price != ad.price:
             changes.append(Changes.PRICE)
-        elif stored_ad.datetime_start != ad.datetime_start:
+        elif stored_ad.datetime_start.replace(tzinfo=timezone.utc) != ad.datetime_start:
             changes.append(Changes.BUMPED)
         if (len(changes) > 0) and replace:
             self.__session.execute(delete(Ad).where(Ad.id == ad.id))
