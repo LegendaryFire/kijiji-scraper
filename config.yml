@@ -1,5 +1,6 @@
 scraper:
   settings:
+    scan_interval: 10
     pushover:
       token: YOUR_TOKEN
       user: YOUR_USER
