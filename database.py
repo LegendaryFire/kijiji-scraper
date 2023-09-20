@@ -1,7 +1,8 @@
 from datetime import datetime, timezone
 from typing import Optional
-from sqlalchemy import select, create_engine, exists
+from sqlalchemy import select, create_engine, exists, delete
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session
+from constants import Changes
 
 
 class Base(DeclarativeBase):
@@ -28,65 +29,51 @@ class Database:
     def __init__(self, filename="default.db"):
         self.__engine = create_engine('sqlite:///default.db')
         self.__engine.connect()
+        self.__session = Session(self.__engine)
         Base.metadata.create_all(self.__engine)
 
-    def exists(self, data=None, id=None) -> bool:
+    def exists(self, data: Ad or dict or str) -> bool:
         """
-        Checks if a specific ad exists either from JSON ad data, or a specified ad ID.
-        :param data: JSON ad data.
-        :param id: Ad ID.
+        Checks if a specific ad exists either from JSON ad data, an Ad object or an ad ID.
+        :param data: The ad ID as a string, JSON ad data or an Ad object.
         :return: Returns true if the ad already exists in the database.
         """
-        session = Session(self.__engine)
-        id = id if id is not None else data.get('@id')
-        return session.query(exists(Ad).where(Ad.id == id)).scalar()
+        if isinstance(data, str):
+            return self.__session.query(exists(Ad).where(Ad.id == data)).scalar()
+        elif isinstance(data, Ad):
+            return self.__session.query(exists(Ad).where(Ad.id == data.id)).scalar()
+        elif isinstance(data, dict):
+            return self.__session.query(exists(Ad).where(Ad.id == data.get("@id"))).scalar()
+        else:
+            raise TypeError(f"Expected an Ad or string, not {type(data)}.")
 
-    def save_ad(self, data) -> Ad:
+    def compare(self, ad: Ad, replace=False) -> [Changes]:
         """
-        Parses an ad from JSON ad data, and saves it to the database.
-        :param data: The JSON ad data.
-        :return: Returns the ad as an object.
+        Compares the given ad with the one stored in the database.
+        :param ad: The ad to compare to.
+        :param replace: Overwrite the stored ad with the given ad. Default False.
+        :return: Returns a list of Changes enumerators.
         """
-        id = data.get('@id')
-        is_business = id[0] == 'm'
-        title = data.get('ad:title')
-        description = data.get('ad:description')
-        type = data.get('ad:ad-type').get('ad:value').capitalize()
-        price = "Wanted" if type == "Wanted" \
-            else "Please Contact" if data.get('ad:price').get('types:amount') is None \
-            else data.get('ad:price').get('types:amount')
-        user_id = data.get('ad:user-id')
-        datetime_scraped = datetime.now(timezone.utc)
-        datetime_creation = datetime.strptime(data.get('ad:creation-date-time'), '%Y-%m-%dT%H:%M:%S.000Z').replace(tzinfo=timezone.utc)
-        datetime_start = datetime.strptime(data.get('ad:start-date-time'), '%Y-%m-%dT%H:%M:%S.000Z').replace(tzinfo=timezone.utc)
-        datetime_end = datetime.strptime(data.get('ad:end-date-time'), '%Y-%m-%dT%H:%M:%S.000Z').replace(tzinfo=timezone.utc) if data.get('ad:end-date-time') is not None else None
-        image = data.get('pic:pictures').get('pic:picture') if data.get('pic:pictures') is not None else None
-        if isinstance(image, list):
-            image = image[0].get('pic:link')
-        elif isinstance(image, dict):
-            image = image.get('pic:link')
-        if image is not None:
-            for i in range(len(image)):
-                if image[i].get('@rel') == 'extraLarge':
-                    image = image[i].get('@href')
+        stored_ad = self.__session.query(Ad).get(ad.id)
+        changes = []
+        if stored_ad.price != ad.price:
+            changes.append(Changes.PRICE)
+        if (len(changes) > 0) and replace:
+            self.__session.execute(delete(Ad).where(Ad.id == ad.id))
+            self.__session.add(ad)
+            self.__session.commit()
+        return changes
 
-        session = Session(self.__engine)
-        ad = Ad(id=id,
-                is_business=is_business,
-                title=title,
-                description=description,
-                type=type,
-                price=price,
-                user_id=user_id,
-                datetime_scraped=datetime_scraped,
-                datetime_creation=datetime_creation,
-                datetime_start=datetime_start,
-                datetime_end=datetime_end,
-                image=image
-                )
-        session.add(ad)
-        session.commit()
-        return ad
+    def save_ad(self, ad: Ad) -> bool:
+        """
+        Takes an Ad object and saves it to the database.
+        :param ad: The ad to be saved.
+        :return: Returns True if saves successfully. False otherwise.
+        """
+        self.__session.add(ad)
+        self.__session.commit()
+        return True
 
     def close(self):
+        self.__session.close()
         self.__engine.dispose()
