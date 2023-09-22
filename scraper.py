@@ -22,8 +22,13 @@ class Scraper:
             if 'ad:ads' in json_data.keys():
                 json_data = json_data['ad:ads'].get('ad:ad')
                 ad_list = []
-                for json_ad in json_data:
-                    ad_list.append(json_ad)
+                if isinstance(json_data, list):
+                    for json_ad in json_data:
+                        ad_list.append(json_ad)
+                elif isinstance(json_data, dict):
+                    ad_list.append(json_data)
+                else:
+                    logging.warning("No search results returned.")
                 return ad_list
         else:
             logging.warning(f"Unable to get search results. Status code {resp.status_code}.")
@@ -42,6 +47,7 @@ class Scraper:
         description = data.get('ad:description')
         type = data.get('ad:ad-type').get('ad:value').capitalize()
         price = "Wanted" if type == "Wanted" \
+            else "Offered" if data.get('ad:price') is None and type == "Offered" \
             else "Please Contact" if data.get('ad:price').get('types:amount') is None \
             else data.get('ad:price').get('types:amount')
         user_id = data.get('ad:user-id')
