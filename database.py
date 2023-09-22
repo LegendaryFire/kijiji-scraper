@@ -17,6 +17,8 @@ class Ad(Base):
     description: Mapped[Optional[str]]
     type: Mapped[str]
     price: Mapped[str]
+    location: Mapped[str]
+    phone: Mapped[Optional[str]]
     user_id: Mapped[str]
     datetime_scraped: Mapped[datetime]
     datetime_creation: Mapped[datetime]

@@ -49,6 +49,12 @@ class Scraper:
         datetime_creation = datetime.strptime(data.get('ad:creation-date-time'), '%Y-%m-%dT%H:%M:%S.000Z').replace(tzinfo=timezone.utc)
         datetime_start = datetime.strptime(data.get('ad:start-date-time'), '%Y-%m-%dT%H:%M:%S.000Z').replace(tzinfo=timezone.utc)
         datetime_end = datetime.strptime(data.get('ad:end-date-time'), '%Y-%m-%dT%H:%M:%S.000Z').replace(tzinfo=timezone.utc) if data.get('ad:end-date-time') is not None else None
+        phone = data.get('ad:phone')
+        location = data.get('loc:locations').get('loc:location') if data.get('loc:locations') is not None else None
+        if isinstance(location, list):
+            location = location[0].get['loc:localized-name']
+        elif isinstance(location, dict):
+            location = location.get('loc:localized-name')
         image = data.get('pic:pictures').get('pic:picture') if data.get('pic:pictures') is not None else None
         if isinstance(image, list):
             image = image[0].get('pic:link')
@@ -65,6 +71,8 @@ class Scraper:
                 description=description,
                 type=type,
                 price=price,
+                location=location,
+                phone=phone,
                 user_id=user_id,
                 datetime_scraped=datetime_scraped,
                 datetime_creation=datetime_creation,

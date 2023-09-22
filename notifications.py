@@ -21,9 +21,17 @@ class Pushover:
                 if i != len(changes) - 1:
                     localized_changes += ", "
             title = f"({localized_changes}): {ad.title}"
+        price = ad.price
+        try:
+            price = int(ad.price)
+            price = f"${price:,}"
+        except ValueError:
+            pass
 
         message = f'<a href="https://www.kijiji.ca/v-view-details.html?adId={ad.id}">Click here to view.</a>\n\n' \
-                  f"<b>Price:</b> {ad.price}\n" \
+                  f"<b>Price:</b> {price}\n" \
+                  f"<b>Location:</b> {ad.location}\n" \
+                  f'<b>Phone:</b> <a href="tel:{ad.phone}">{ad.phone}</a>\n' \
                   f"<b>Description:</b> {ad.description}\n"
         data = {
             "token": self.__token,
