@@ -45,9 +45,11 @@ class Pushover:
             "message": message,
             "title": title,
         }
-        files = {
-            "attachment": ("image.jpg", requests.get(ad.image, stream=True).raw, "image/jpeg")
-        }
+
+        files = {}
+        if ad.image is not None:
+            files["attachment"] = ("image.jpg", requests.get(ad.image, stream=True).raw, "image/jpeg")
+
         resp = requests.post("https://api.pushover.net/1/messages.json", data=data, files=files)
         if resp.status_code == 200:
             return True
