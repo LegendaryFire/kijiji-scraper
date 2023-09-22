@@ -1,3 +1,4 @@
+import os
 from constants import API_SEARCH_ENDPOINT
 from urllib import parse
 import yaml
@@ -40,7 +41,8 @@ class SearchQuery:
 
 
 class Config:
-    def __init__(self, path="./config.yml"):
+    def __init__(self, path="./config/config.yml"):
+        os.makedirs('./config', exist_ok=True)
         with open(path, 'r') as config:
             self.__config = yaml.safe_load(config)
 

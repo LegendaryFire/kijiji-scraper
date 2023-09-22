@@ -6,6 +6,11 @@ import requests
 
 class Pushover:
     def __init__(self, token, user):
+        """
+        Initializes a new Pushover notification client.
+        :param token: The Pushover app token.
+        :param user: The Pushover user key.
+        """
         self.__token = token
         self.__user = user
 

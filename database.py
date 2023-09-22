@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timezone
 from typing import Optional
 from sqlalchemy import select, create_engine, exists, delete
@@ -29,7 +30,8 @@ class Ad(Base):
 
 class Database:
     def __init__(self, filename="default.db"):
-        self.__engine = create_engine('sqlite:///default.db')
+        os.makedirs('./config', exist_ok=True)
+        self.__engine = create_engine('sqlite:///config/default.db')
         self.__engine.connect()
         self.__session = Session(self.__engine)
         Base.metadata.create_all(self.__engine)
