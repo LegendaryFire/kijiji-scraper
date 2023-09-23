@@ -35,9 +35,10 @@ class Pushover:
 
         message = f'<a href="https://www.kijiji.ca/v-view-details.html?adId={ad.id}">Click here to view.</a>\n\n' \
                   f"<b>Price:</b> {price}\n" \
-                  f"<b>Location:</b> {ad.location}\n" \
-                  f'<b>Phone:</b> <a href="tel:{ad.phone}">{ad.phone}</a>\n' \
-                  f"<b>Description:</b> {ad.description}\n"
+                  f"<b>Location:</b> {ad.location}\n"
+        if ad.phone is not None:
+            message += f'<b>Phone:</b> <a href="tel:{ad.phone}">{ad.phone}</a>\n'
+        message += f"<b>Description:</b> {ad.description}\n"
         data = {
             "token": self.__token,
             "user": self.__user,
