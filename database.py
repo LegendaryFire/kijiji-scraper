@@ -1,7 +1,7 @@
 import os
 from datetime import datetime, timezone
 from typing import Optional
-from sqlalchemy import select, create_engine, exists, delete
+from sqlalchemy import create_engine, exists, delete
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session
 from constants import Changes
 
