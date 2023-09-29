@@ -55,6 +55,6 @@ class Pushover:
         if resp.status_code == 200:
             return True
         else:
-            logging.warning(f"Could not send Pushover notification. Status code {resp.status_code}.")
+            logging.warning(f"Could not send Pushover notification. Status code {resp.status_code}. User key {self.__user}.")
             return False
 

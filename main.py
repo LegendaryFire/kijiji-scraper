@@ -3,7 +3,9 @@ import database
 import scraper as sc
 import config
 import notifications
+import logging
 
+logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 config = config.Config()
 scraper = sc.Scraper()
 database = database.Database()
