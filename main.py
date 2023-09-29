@@ -10,6 +10,7 @@ config = config.Config()
 scraper = sc.Scraper()
 database = database.Database()
 pushover = notifications.Pushover(config.get_pushover_token(), config.get_pushover_user())
+logging.info("Application started successfully.")
 
 while True:
     for query in config.get_queries():
